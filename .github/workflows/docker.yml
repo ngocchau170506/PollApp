@@ -15,15 +15,14 @@ jobs:
         uses: actions/checkout@v4 # Kéo code từ repository về runner
 
       # Bước này thường không cần thiết nếu 'npm install' đã nằm trong Dockerfile
-      # Nếu bạn muốn chạy test hoặc linting trước khi build Docker, hãy giữ lại.
-      - name: Set up Node.js (Optional, if npm install is in Dockerfile)
+      # và bạn không chạy các bài kiểm tra (tests) hoặc linter Node.js trước khi build Docker.
+      - name: Set up Node.js (Tùy chọn)
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      # Bước này cũng thường không cần thiết nếu 'npm install' đã nằm trong Dockerfile
-      # Nếu bạn muốn chạy test hoặc linting trước khi build Docker, hãy giữ lại.
-      - name: Install dependencies (Optional, if npm install is in Dockerfile)
+      # Bước này cũng thường không cần thiết nếu 'npm install' đã nằm trong Dockerfile.
+      - name: Install dependencies (Tùy chọn)
         run: npm install
 
       - name: Login to Docker Hub
@@ -58,21 +57,21 @@ jobs:
             fi
             cd "$PROJECT_DIR"
             
-            # Dừng và xóa các container cũ (sử dụng lệnh 'docker compose' mới)
+            # Dừng và xóa các container cũ (sử dụng lệnh 'docker compose' mới, và THÊM SUDO)
             echo "Stopping and removing old containers..."
-            docker compose down || true
+            sudo docker compose down || true # ĐÃ THÊM SUDO Ở ĐÂY
             
-            # Kéo (pull) Docker image mới nhất từ Docker Hub
+            # Kéo (pull) Docker image mới nhất từ Docker Hub (thêm sudo)
             echo "Pulling new Docker image..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/pollapp:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/pollapp:latest # ĐÃ THÊM SUDO Ở ĐÂY
             
-            # Khởi động lại container với image mới (sử dụng lệnh 'docker compose' mới)
+            # Khởi động lại container với image mới (thêm sudo)
             echo "Starting new containers..."
-            docker compose up -d
+            sudo docker compose up -d # ĐÃ THÊM SUDO Ở ĐÂY
             
-            # Dọn dẹp các image Docker không còn được sử dụng
+            # Dọn dẹp các image Docker không còn được sử dụng (thêm sudo)
             echo "Pruning unused Docker images..."
-            docker image prune -f
+            sudo docker image prune -f # ĐÃ THÊM SUDO Ở ĐÂY
 
       - name: Send notification
         # Bước này sẽ luôn chạy, dù job thành công hay thất bại
