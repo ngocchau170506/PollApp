@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for PollVote
+name: CI/CD Pipeline for PollApp
 
 on:
   push:
@@ -40,8 +40,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            cd ~/PollVote || git clone https://github.com/ngocchau170506/PollApp.git ~/PollApp
-            cd ~/PollVote
+            cd ~/PollApp || git clone https://github.com/ngocchau170506/PollApp.git ~/PollApp
+            cd ~/PollApp
             docker-compose down || true
             docker pull ngocchau170506/pollapp:latest
             docker-compose up -d
@@ -52,7 +52,7 @@ jobs:
         run: |
           if [ "${{ job.status }}" == "success" ]; then
             echo "Pipeline completed successfully!"
-            echo "Deployment ready for PollVote"
+            echo "Deployment ready for PollApp"
           else
             echo "Pipeline failed!"
             echo "Please check the logs for issues"
